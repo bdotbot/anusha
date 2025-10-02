@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<link rel="icon" type="image/png" href="heart.png">
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Questionn</title>
+
+
+<style>
+    
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
+/* CSS for Page Appearance and Layout */
+
+body {
+
+display: flex;
+
+flex-direction: column;
+
+justify-content: center;
+
+align-items: center;
+
+min-height: 100vh;
+
+margin: 0;
+
+background-color: lightblue; /* Pink Background */
+
+font-family: sans-serif;
+
+text-align: center;
+
+padding: 20px;
+
+}
+
+
+
+/* Question Text Styling */
+
+h1 {
+    color: palevioletred; /* Dark Red/Maroon text for contrast */
+    font-family: 'Dancing Script', cursive; /* <--- ADD THIS LINE */
+    font-size: 3em; /* I've increased the size slightly as script fonts often look better larger */
+    margin-bottom: 40px;
+}
+
+
+
+/* The Red Button with "No" Text */
+
+#revealButton {
+
+width: 80px;
+
+height: 80px;
+
+background-color: #ff4500; /* Bright Red */
+
+border: 5px solid #ffffff;
+
+border-radius: 50%;
+
+cursor: pointer;
+
+box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+
+transition: transform 0.1s;
+
+margin-bottom: 40px;
+
+
+/* Text Styling */
+
+color: white;
+
+font-size: 1.5em;
+
+font-weight: bold;
+
+line-height: 70px; /* Center "No" vertically */
+
+text-align: center;
+
+}
+
+
+
+#revealButton:hover {
+
+transform: scale(1.05);
+
+}
+
+
+
+/* The Loading Message Area */
+
+#messageArea {
+
+color: #8b0000;
+
+font-size: 1.5em;
+
+font-weight: bold;
+
+display: none; /* Hidden by default */
+
+margin-bottom: 20px;
+
+}
+
+
+/* Container for the Reveal elements (It's You, Frame, Gift Button) */
+
+#revealContainer {
+
+display: flex;
+
+flex-direction: column;
+
+align-items: center;
+
+gap: 20px; /* Spacing between elements */
+
+display: none; /* Hidden until the camera opens */
+
+}
+
+
+
+/* "It's You" Reveal Text */
+#revealText {
+    font-family: 'Dancing Script', cursive; /* <--- CHANGE THIS LINE */
+    font-size: 4em; /* I recommend making it larger for impact */
+    color: palevioletred; /* Bright Pink color */
+    /* ... other styles ... */
+}
+
+
+/* Animation for the reveal text */
+
+@keyframes pulse {
+
+from { transform: scale(1); }
+
+to { transform: scale(1.05); }
+
+}
+
+
+
+/* The Beautiful Frame for the Camera Feed */
+
+#cameraFeed {
+
+width: 90%;
+
+max-width: 400px;
+
+height: auto;
+
+border: 10px solid #ffffff;
+
+outline: 5px solid #ff007f;
+
+border-radius: 20px;
+
+box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+
+object-fit: cover;
+
+display: block; /* Managed by JS, but block ensures it's part of the flex container */
+
+}
+
+
+
+/* The Green Gift Button */
+
+#giftButton {
+
+padding: 15px 30px;
+
+background-color: #3cb371; /* Medium Sea Green */
+
+color: white;
+
+font-size: 1.2em;
+
+font-weight: bold;
+
+border: none;
+
+border-radius: 10px;
+
+cursor: pointer;
+
+text-decoration: none; /* Removes underline from anchor tag */
+
+box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+
+transition: background-color 0.2s;
+
+}
+
+
+
+#giftButton:hover {
+
+background-color: #2e8b57; /* Darker green on hover */
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+
+<h1 id="question">Do you know the most beautiful person who lives in my ❤️‍🔥 heart??</h1>
+
+
+
+<button id="revealButton">No</button>
+
+
+
+<div id="messageArea">Loading the answer...</div>
+
+
+
+<div id="revealContainer">
+
+
+<div id="revealText">It's You</div>
+
+
+
+<video id="cameraFeed" autoplay playsinline></video>
+
+
+
+</div>
+
+
+
+<script>
+
+const questionElement = document.getElementById('question');
+
+const revealButton = document.getElementById('revealButton');
+
+const messageArea = document.getElementById('messageArea');
+
+const revealContainer = document.getElementById('revealContainer');
+
+const cameraFeed = document.getElementById('cameraFeed');
+
+
+// Hide the camera feed element initially
+
+cameraFeed.style.display = 'none';
+
+
+
+const constraints = {
+
+video: { facingMode: "user" },
+
+audio: false
+
+};
+
+
+
+function startReveal() {
+
+// 1. Hide the question and button
+
+questionElement.style.display = 'none';
+
+revealButton.style.display = 'none';
+
+
+// 2. Show the loading message
+
+messageArea.style.display = 'block';
+
+
+
+// 3. Request camera access
+
+navigator.mediaDevices.getUserMedia(constraints)
+
+.then((stream) => {
+
+// This block executes AFTER the user clicks 'Allow' on the browser prompt
+
+
+// 4. Start the 3-second loading delay
+
+setTimeout(() => {
+
+messageArea.style.display = 'none'; // Hide loading message
+
+
+// Set up the camera stream
+
+cameraFeed.srcObject = stream;
+
+cameraFeed.style.display = 'block'; // Show the camera feed
+
+
+// SHOW the container with 'It's You' and the Gift Button
+
+revealContainer.style.display = 'flex';
+
+
+
+}, 3000); // 3000 milliseconds = 3 seconds
+
+})
+
+.catch((err) => {
+
+// Handle blocked permission or camera error
+
+messageArea.innerHTML = "Couldn't see the answer! Camera permission was needed for the reveal. Please refresh and try again!";
+
+messageArea.style.display = 'block';
+
+console.error("Camera access error:", err);
+
+});
+
+}
+
+
+
+revealButton.addEventListener('click', startReveal);
+
+</script>
+
+
+
+</body>
+
+</html>
